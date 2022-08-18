@@ -1,15 +1,18 @@
 <template>
   <div id="app">
     <comp-header firstText="入力欄" secondText="Input Field"/>
+    <comp-input-search placeHolder="Nhập tên thành phố để tìm kiếm..."/>
   </div>
 </template>
 
 <script>
 import CompHeader from './components/CompHeader.vue';
+import CompInputSearch from './components/CompInputSearch.vue';
 export default {
   name: "App",
   components: {
-    CompHeader
+    CompHeader,
+    CompInputSearch
   },
 };
 </script>
