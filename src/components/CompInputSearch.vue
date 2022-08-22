@@ -1,9 +1,16 @@
 <template>
   <div id="input-search">
-    <input type="text" v-model="searchValue" :placeholder="placeHolder" />
-    <!-- <li v-for="point in points" :key="point.code">
-            {{ point.name }}
-        </li> -->
+    <div class="input">
+      <div class="select-point d-flex">
+        <li
+          v-for="(point, index) in pointArr"
+          :key="index"
+          @click="deletePoint(index)"
+        >{{point}}
+        </li>
+      </div>
+      <input :class="[active ? 'isActive' :'']" type="text" v-model="searchValue" :placeholder="placeHolder" />
+    </div>
     <div class="list">
       <li
         v-for="point in getPointList"
@@ -13,23 +20,7 @@
         {{ point.name }}
       </li>
     </div>
-    <div class="select-point">
-      <ul>
-        <li
-          v-for="(point, index) in pointArr"
-          :key="index"
-          @click="deletePoint(index)"
-        ></li>
-      </ul>
     </div>
-    <button
-      v-for="(point, index) in pointArr"
-      :key="index"
-      @click="deletePoint(index)"
-    >
-      {{ point }}
-    </button>
-  </div>
 </template>
 
 <script>
@@ -44,6 +35,7 @@ export default {
       searchValue: "",
       points: [],
       pointArr: [],
+      active: false
     };
   },
   created() {
@@ -59,7 +51,14 @@ export default {
   methods: {
     deletePoint(index) {
       this.pointArr.splice(index, 1);
+      console.log(typeof(this.pointArr.length));
     },
+    activeInput(){
+      if(this.pointArr.length){
+        return !this.active;
+      }
+      console.log(this.pointArr.length);
+    }
   },
   computed: {
     getPointList() {
@@ -72,11 +71,18 @@ export default {
       }
       return [];
     },
+    
   },
 };
 </script>
 
 <style scoped>
+.d-flex{
+  display: flex;
+}
+.nowrap{
+  flex-wrap: nowrap;
+}
 #input-search {
   padding-top: 168px;
 }
@@ -113,6 +119,13 @@ export default {
 .list li:hover {
   color: #ffffff;
   background-color: #617d98;
+}
+.input .select-point{
+  flex-wrap: wrap;
+  width: 60%;
+}
+.isActive{
+  border-color:red !important;
 }
 /* button {
   position: absolute;
