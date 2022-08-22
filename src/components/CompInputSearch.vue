@@ -1,15 +1,19 @@
 <template>
-  <div id="input-search">
-    <div class="input">
-      <div class="select-point d-flex">
-        <li
-          v-for="(point, index) in pointArr"
-          :key="index"
-          @click="deletePoint(index)"
-        >{{point}}
-        </li>
+  <div id="search">
+    <div :class="[isFocused ? 'input active':'input']">
+      <label for="input-search">
+        <img :src="iconSearch" alt="">
+      </label>
+      <div class="select-point">
+          <button
+            v-for="(point, index) in pointArr"
+            :key="index"
+            @click="deletePoint(index)"
+          >
+          <p>{{point}}</p><img :src="iconClose">
+          </button>
       </div>
-      <input :class="[active ? 'isActive' :'']" type="text" v-model="searchValue" :placeholder="placeHolder" />
+      <input id="input-search" type="text" v-model="searchValue" :placeholder="placeHolder" @blur="handleBlurInput" @focus="handleFocusInput"/>
     </div>
     <div class="list">
       <li
@@ -17,14 +21,15 @@
         :key="point.code"
         @click="pointArr.push(point.name)"
       >
-        {{ point.name }}
+        <p v-if="point.name.includes('Tỉnh')">{{point.name.replace('Tỉnh','')}}</p>
       </li>
     </div>
-    </div>
+  </div>
 </template>
-
 <script>
 import axios from "axios";
+import iconSearch from '../assets/Combined ShapeSearch.png';
+import iconClose from '../assets/X.png';
 export default {
   name: "InputSearch",
   props: {
@@ -35,7 +40,9 @@ export default {
       searchValue: "",
       points: [],
       pointArr: [],
-      active: false
+      isFocused: null,
+      iconSearch:iconSearch,
+      iconClose:iconClose,
     };
   },
   created() {
@@ -51,13 +58,12 @@ export default {
   methods: {
     deletePoint(index) {
       this.pointArr.splice(index, 1);
-      console.log(typeof(this.pointArr.length));
     },
-    activeInput(){
-      if(this.pointArr.length){
-        return !this.active;
-      }
-      console.log(this.pointArr.length);
+    handleFocusInput(){
+      return this.isFocused=true;
+    },
+    handleBlurInput(){
+      return this.isFocused=false;
     }
   },
   computed: {
@@ -71,42 +77,34 @@ export default {
       }
       return [];
     },
-    
   },
 };
 </script>
-
 <style scoped>
-.d-flex{
-  display: flex;
-}
-.nowrap{
-  flex-wrap: nowrap;
-}
-#input-search {
+#search {
   padding-top: 168px;
 }
-#input-search input {
-  position: relative;
-  width: 400px;
+#search input {
+  max-width: 300px;
+  min-width: 100px;
   padding: 14.5px 10px;
-  border: 1px solid #dbdbdb;
-  border-radius: 4px;
+  border: none;
   font-size: 14px;
   background: rgba(230, 249, 255, 0.2);
 }
-#input-search input:focus {
+#search input:focus {
   outline: none;
-  border: 1px solid #1991d2 !important;
 }
-#input-search .list {
+#search .list {
   display: flex;
   margin: 0 auto;
   justify-content: center;
   flex-wrap: wrap;
   width: 400px;
   list-style: none;
-  background: #f1f5f8;
+  background: #F1F5F8;
+  filter: drop-shadow(0px 1px 8px rgba(102, 102, 102, 0.25));
+  border-radius: 4px;
 }
 .list li {
   width: 100%;
@@ -117,17 +115,46 @@ export default {
   text-align: start;
 }
 .list li:hover {
-  color: #ffffff;
-  background-color: #617d98;
+  color: #FFFFFF;
+  background-color: #617D98;
 }
-.input .select-point{
-  flex-wrap: wrap;
-  width: 60%;
+.input{
+  width: 400px;
+  height: 100%;
+  border: 1px solid #DBDBDB;
+  border-radius: 4px;
+  display: flex;
+  flex-wrap:wrap;
+  align-items: center;
+  margin: 0 auto;
 }
-.isActive{
-  border-color:red !important;
+.input label{
+  padding: 15.5px 13px;
 }
-/* button {
-  position: absolute;
-} */
+.select-point{
+  max-width: 354px;
+  display: flex;
+  flex-wrap:wrap;
+}
+.select-point button{
+  display: flex;
+  flex-wrap:nowrap;
+  justify-content: center;
+  align-items: center;
+  padding: 4px 8px;
+  margin: 5px;
+  gap: 8px;
+  background: #F0F4F8;
+  border: 1px solid #DCDCDC;
+  color: #627D98;
+  border-radius: 4px;
+  height: 32px;
+}
+.select-point button img{
+  width: 14px;
+  height: 14px;
+}
+.active{
+  border:1px solid #1991D2;
+}
 </style>
