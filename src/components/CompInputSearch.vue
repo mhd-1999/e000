@@ -86,7 +86,7 @@ export default {
 }
 #search input {
   max-width: 300px;
-  min-width: 100px;
+  min-width: 150px;
   padding: 14.5px 10px;
   border: none;
   font-size: 14px;
