@@ -4,88 +4,69 @@
       <label for="input-search">
         <img :src="iconSearch" alt="" />
       </label>
-      <div class="select-point">
-        <button
-          v-for="(point, index) in pointArr"
-          :key="index"
-          @click="deletePoint(index)"
-        >
-          <p>{{ point }}</p>
-          <img :src="iconClose" />
-        </button>
-      </div>
+      <TagList
+        :pointArr="pointArr"
+        @deletePoint="deletePoint($event)"
+      ></TagList>
       <input
         id="input-search"
         type="text"
-        v-model="searchValue"
+        :value="searchValue"
         :placeholder="placeHolder"
         @blur="handleBlurInput"
         @focus="handleFocusInput"
+        @input="onInputSearchValue"
       />
     </div>
-    <div class="list">
-      <li
-        v-for="point in getPointList"
-        :key="point.code"
-        @click="pointArr.push(point.name)"
-      >
-        <p v-if="point.name.includes('Tỉnh')">
-          {{ point.name.replace("Tỉnh", "") }}
-        </p>
-      </li>
-    </div>
+    <ListItem
+      :getPointList="getPointList"
+      @addToArray="addToArray($event)"
+    ></ListItem>
   </div>
 </template>
 <script>
-import axios from "axios";
+import ListItem from "./CompListItem.vue";
+import TagList from "./CompTagList.vue";
 import iconSearch from "../assets/Combined ShapeSearch.png";
-import iconClose from "../assets/X.png";
+
 export default {
   name: "InputSearch",
   props: {
     placeHolder: String,
+    getPointList: Array,
+    searchValue: String,
+  },
+  components: {
+    ListItem,
+    TagList,
   },
   data() {
     return {
-      searchValue: "",
-      points: [],
+      searchText: "",
       pointArr: [],
       isFocused: null,
       iconSearch: iconSearch,
-      iconClose: iconClose,
     };
   },
-  created() {
-    axios
-      .get("https://provinces.open-api.vn/api/")
-      .then((res) => {
-        this.points = res.data;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  },
   methods: {
+    onInputSearchValue(e) {
+      const searchText = e.target.value;
+      this.$emit("update:searchValue", searchText);
+    },
     deletePoint(index) {
       this.pointArr.splice(index, 1);
     },
     handleFocusInput() {
-      return (this.isFocused = true);
+      this.isFocused = true;
     },
     handleBlurInput() {
-      return (this.isFocused = false);
+      this.isFocused = false;
     },
-  },
-  computed: {
-    getPointList() {
-      if (this.searchValue) {
-        return this.points.filter((point) =>
-          point.name.toLowerCase().match(this.searchValue.toLowerCase())
-        );
-      } else if (!this.searchValue) {
-        return [];
-      }
-      return [];
+    addToArray(point) {
+      this.pointArr.push(point.name);
+    },
+    getListCity() {
+      this.$emit("getListCity");
     },
   },
 };
@@ -95,8 +76,9 @@ export default {
   padding-top: 168px;
 }
 #search input {
-  max-width: 300px;
-  min-width: 150px;
+  max-width: 100%;
+  min-width: 30%;
+  flex: 70%;
   padding: 14.5px 10px;
   border: none;
   font-size: 14px;
@@ -104,29 +86,6 @@ export default {
 }
 #search input:focus {
   outline: none;
-}
-#search .list {
-  display: flex;
-  margin: 0 auto;
-  justify-content: center;
-  flex-wrap: wrap;
-  width: 400px;
-  list-style: none;
-  background: #f1f5f8;
-  filter: drop-shadow(0px 1px 8px rgba(102, 102, 102, 0.25));
-  border-radius: 4px;
-}
-.list li {
-  width: 100%;
-  padding: 8px 0 8px 10px;
-  font-size: 16px;
-  line-height: 23px;
-  color: #486581;
-  text-align: start;
-}
-.list li:hover {
-  color: #ffffff;
-  background-color: #617d98;
 }
 .input {
   width: 400px;
@@ -140,29 +99,6 @@ export default {
 }
 .input label {
   padding: 15.5px 13px;
-}
-.select-point {
-  max-width: 354px;
-  display: flex;
-  flex-wrap: wrap;
-}
-.select-point button {
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: center;
-  align-items: center;
-  padding: 4px 8px;
-  margin: 5px;
-  gap: 8px;
-  background: #f0f4f8;
-  border: 1px solid #dcdcdc;
-  color: #627d98;
-  border-radius: 4px;
-  height: 32px;
-}
-.select-point button img {
-  width: 14px;
-  height: 14px;
 }
 .active {
   border: 1px solid #1991d2;

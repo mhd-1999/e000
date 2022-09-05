@@ -1,0 +1,1 @@
+export const CITY_API = "https://provinces.open-api.vn/api/";
